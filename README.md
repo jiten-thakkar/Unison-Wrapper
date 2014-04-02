@@ -1,4 +1,4 @@
-Bison-Wrapper
-=============
+Unison-Wrapper
+==============
 
-Bison wrapper in PyQt4
+A Unison wrapper in PyQt4

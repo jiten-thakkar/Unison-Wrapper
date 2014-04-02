@@ -1,0 +1,26 @@
+#!/bin/bash
+
+PIDFILE=~/.unison.fileserver.pid
+
+if [ x"$1" = x-start ]; then
+  if test -f "$PIDFILE"; then exit; fi
+	if [ -z "$2" ]; then
+		echo "server [-start <port>] [-stop]"; exit; else
+	PORT="$2"; fi
+ 	nohup unison -socket $PORT 0<&- &>> unison.server.log.file &
+	echo $! > "$PIDFILE"
+	echo "Server started"
+elif [ x"$1" = x-stop ]; then
+  kill `cat "$PIDFILE"`
+	if [ "$?" -eq 0 ]; then
+		rm $PIDFILE
+	fi
+elif [ x"$1" = x-h ]; then
+  echo "server [-start <port>] [-stop]
+Server script to start server. Run this script in the directory that to be shared. The server works	as a background process. There can be only one instance of the server.
+Options: -start <port>:	Server starts at the <port> provided
+         -stop: Stop the server
+         -h: Shows help"
+else
+	echo "Run server -h for help"
+fi

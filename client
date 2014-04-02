@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#Loop while run out of arguments
+while [ "$#" -gt 0 ]
+do
+		case "$1" in
+		--help)
+					echo "Client script fires two python scripts, one for the UI and second one for background syncing requires Qt4.
+Options: -d <dir> -h <host> -p <port>: The <dir> is synced with the server directory. <host> and <port> of the server are needed.
+         --help: Shows help"
+					exit 1
+					;;
+		-d)
+					shift
+					DIRPATH="$1"
+					;;
+		-h)
+					shift
+					HOST="$1"
+					;;
+		-p)
+					shift
+					PORT="$1"
+					;;
+		*)
+					echo "Unknown argument '$1'" >&2
+					exit 1
+					;;
+		esac
+		shift
+done
+
+if [ -z "$DIRPATH" ]; then
+	echo "client -d <dir> -h <host> -p <port>"
+	exit 1
+fi
+
+if [ -z "$HOST" ]; then
+	echo "client -d <dir> -h <host> -p <port>"
+	exit 1
+fi
+
+if [ -z "$PORT" ]; then
+  echo "client -d <path/to/dir> -h <host> -p <port>"
+  exit 1
+fi
+
+#Checking if directory exists
+if [ ! -d "$DIRPATH" ]; then
+	echo "Invalid path to directory"
+	exit 2
+fi
+
+#Start UI
+python client_ui.py -d $DIRPATH > client.log 2>&1 &
+
+#Start sync
+python client_sync.py -d $DIRPATH -h $HOST -p $PORT > client.sync.log 2>&1
